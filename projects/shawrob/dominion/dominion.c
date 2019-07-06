@@ -1226,56 +1226,33 @@ int execute_mine (struct gameState *state, int choice1, int choice2, int handPos
 
 int execute_minion (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer)
 {
+  //DECLARATIONS//
   int i = 0; // Iterator
   int j = 0; // Iterator
-  //+1 action
-  state->numActions++;
 
-  //discard card from hand
-  discardCard(handPos, currentPlayer, state, 0);
+  //MAIN OPERATIONS//
+  //OPTION 1: Add two coins.
+  //OPTION 2: Discard hand, redraw 4, and all other players with 5+ cards do the same.
+  state->numActions++;                                                              // +1 Action.
+  discardCard(handPos, currentPlayer, state, 0);                                    // Discard from hand.
 
-  if (choice1)		//+2 coins
+  if      (choice1) state->coins = state->coins + 2;    // (OPTION 1)
+//else if (choice2)                                     // (OPTION 2) BUG: Both options will execute.
   {
-    state->coins = state->coins + 2;
-  }
+    // Current Player:
+    while(numHandCards(state) > 0)  discardCard(handPos, currentPlayer, state, 0);  // Discard hand.
+    for  (i = 0; i < 4; i++)        drawCard(currentPlayer, state);                 // Draw 4.
 
-  else if (choice2)		//discard hand, redraw 4, other players with 5+ cards discard hand and draw 4
-  {
-    //discard hand
-    while(numHandCards(state) > 0)
-    {
-      discardCard(handPos, currentPlayer, state, 0);
-    }
-
-    //draw 4
-    for (i = 0; i < 4; i++)
-    {
-      drawCard(currentPlayer, state);
-    }
-
-    //other players discard hand and redraw if hand size > 4
+    // Other Players:
     for (i = 0; i < state->numPlayers; i++)
-    {
-      if (i != currentPlayer)
-      {
+    //if (i != currentPlayer)                           // BUG: Current player discards twice.
         if ( state->handCount[i] > 4 )
         {
-          //discard hand
-          while( state->handCount[i] > 0 )
-          {
-            discardCard(handPos, i, state, 0);
-          }
-
-          //draw 4
-          for (j = 0; j < 4; j++)
-          {
-            drawCard(i, state);
-          }
+          while(state->handCount[i] > 0) discardCard(handPos, i, state, 0);         // Discard hand.
+          for  (j = 0; j < 4; j++)       drawCard(i, state);                        // Draw 4.
         }
-      }
-    }
-
   }
+
   return 0;
 }
 
