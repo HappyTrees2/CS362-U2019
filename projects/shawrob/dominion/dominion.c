@@ -5,7 +5,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-//TODO: Consider breaking these calls down. There are too many parameters.
+//TODO: Consider ways to normalize these calls and reduce number of possible parameters.
 int execute_ambassador  (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer);
 int execute_baron       (struct gameState *state, int choice1,                           int currentPlayer);
 int execute_mine        (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer);
@@ -673,6 +673,12 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
   //uses switch to select card and perform actions
   switch( card ) 
     {
+      case ambassador: return execute_ambassador(state, choice1, choice2, handPos, currentPlayer);
+      case baron:      return execute_baron     (state, choice1,                   currentPlayer);
+      case mine:       return execute_mine      (state, choice1, choice2, handPos, currentPlayer);
+      case minion:     return execute_minion    (state, choice1, choice2, handPos, currentPlayer);
+      case tribute:    return execute_tribute   (state, tributeRevealedCards, currentPlayer, nextPlayer);
+
     case adventurer:
       while(drawntreasure<2){
 	if (state->deckCount[currentPlayer] <1){//if the deck is empty we need to shuffle discard and add to deck
@@ -774,7 +780,6 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
     case gardens:
       return -1;
 			
-    case mine: return execute_mine(state, choice1, choice2, handPos, currentPlayer);
 			
     case remodel:
       j = state->hand[currentPlayer][choice1];  //store card we will trash
@@ -824,7 +829,6 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       discardCard(handPos, currentPlayer, state, 0);
       return 0;
 		
-    case baron: return execute_baron(state, choice1, currentPlayer);
 		
     case great_hall:
       //+1 Card
@@ -837,7 +841,6 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       discardCard(handPos, currentPlayer, state, 0);
       return 0;
 		
-    case minion: return execute_minion(state, choice1, choice2, handPos, currentPlayer);
 		
     case steward:
       if (choice1 == 1)
@@ -862,8 +865,6 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       discardCard(handPos, currentPlayer, state, 0);
       return 0;
 		
-    case tribute   : return execute_tribute   (state, tributeRevealedCards, currentPlayer, nextPlayer);
-    case ambassador: return execute_ambassador(state, choice1, choice2, handPos, currentPlayer);
 		
     case cutpurse:
 
@@ -1372,7 +1373,14 @@ int execute_tribute (struct gameState *state, int *tributeRevealedCards, int cur
     {     //Treasure cards
       state->coins += 2;
     }
-    else if (tributeRevealedCards[i] == estate || tributeRevealedCards[i] == duchy || tributeRevealedCards[i] == province || tributeRevealedCards[i] == gardens || tributeRevealedCards[i] == great_hall)
+    else if 
+    (
+      tributeRevealedCards[i] == estate     ||
+      tributeRevealedCards[i] == duchy      ||
+      tributeRevealedCards[i] == province   ||
+      tributeRevealedCards[i] == gardens    ||
+      tributeRevealedCards[i] == great_hall
+    )
     {     //Victory Card Found
       drawCard(currentPlayer, state);
       drawCard(currentPlayer, state);
