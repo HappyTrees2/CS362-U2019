@@ -1199,38 +1199,27 @@ int execute_baron(struct gameState *state, int choice1, int currentPlayer)
 
 int execute_mine (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer)
 {
-  int j = 0;
-  int i = 0;
-  j = state->hand[currentPlayer][choice1];  //store card we will trash
+  //DECLARATIONS//
+  int i = 0;                                    // Iterator.
+  int j = state->hand[currentPlayer][choice1];  // Store card we will trash.
 
-  if (state->hand[currentPlayer][choice1] < copper || state->hand[currentPlayer][choice1] > gold)
-  {
-    return -1;
-  }
+  //ERROR CHECKS//
+  //CHECK 1: Ensure the chosen card is a Treasure.
+  //CHECK 2: TODO
+  //CHECK 3: Ensure the Treasure-to-be-gained costs at most 3 more than the Treasure-to-be-trashed.
+  if (state->hand[currentPlayer][choice1] < copper || state->hand[currentPlayer][choice1] > gold) return -1; //(CHECK 1)
+  if (choice2 > treasure_map || choice2 < curse)                                                  return -1; //(CHECK 2)
+  if ( (getCost(state->hand[currentPlayer][choice1]) + 3) > getCost(choice2) )                    return -1; //(CHECK 3)
 
-  if (choice2 > treasure_map || choice2 < curse)
-  {
-    return -1;
-  }
+  //MAIN OPERATIONS//
+  gainCard   (choice2, state, 2, currentPlayer);
+//discardCard(handPos, currentPlayer, state, 0);            // BUG: Simulating forgotten step.
 
-  if ( (getCost(state->hand[currentPlayer][choice1]) + 3) > getCost(choice2) )
-  {
-    return -1;
-  }
-
-  gainCard(choice2, state, 2, currentPlayer);
-
-  //discard card from hand
-  discardCard(handPos, currentPlayer, state, 0);
-
-  //discard trashed card
-  for (i = 0; i < state->handCount[currentPlayer]; i++)
-  {
+  // Discard trashed card.
+//for (i = 0; i < state->handCount[currentPlayer]; i++) 
+  for (i = 0; i <= state->handCount[currentPlayer]; i++)    // BUG: Off-by-one error.
     if (state->hand[currentPlayer][i] == j)
-    {
       discardCard(i, currentPlayer, state, 0);			
-    }
-  }
 
   return 0;
 }
