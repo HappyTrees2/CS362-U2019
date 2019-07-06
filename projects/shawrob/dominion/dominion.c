@@ -5,11 +5,11 @@
 #include <math.h>
 #include <stdlib.h>
 
-int execute_baron(struct gameState *state, int choice1, int currentPlayer);
-int execute_minion(struct gameState *state, int handPos, int currentPlayer, int choice1, int choice2);
-int execute_ambassador(struct gameState *state, int choice2, int choice1, int handPos, int currentPlayer);
-int execute_tribute(struct gameState *state, int nextPlayer, int *tributeRevealedCards, int currentPlayer);
-int execute_mine(struct gameState *state, int currentPlayer, int choice1, int choice2, int handPos);
+int execute_ambassador  (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer);
+int execute_baron       (struct gameState *state, int choice1,                           int currentPlayer);
+int execute_mine        (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer);
+int execute_minion      (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer);
+int execute_tribute     (struct gameState *state, int *tributeRevealedCards, int currentPlayer, int nextPlayer);
 
 int compare(const void* a, const void* b) {
   if (*(int*)a > *(int*)b)
@@ -773,7 +773,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
     case gardens:
       return -1;
 			
-    case mine: return execute_mine(state, currentPlayer, choice1, choice2, handPos);
+    case mine: return execute_mine(state, choice1, choice2, handPos, currentPlayer);
 			
     case remodel:
       j = state->hand[currentPlayer][choice1];  //store card we will trash
@@ -836,7 +836,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       discardCard(handPos, currentPlayer, state, 0);
       return 0;
 		
-    case minion: return execute_minion(state, handPos, currentPlayer, choice1, choice2);
+    case minion: return execute_minion(state, choice1, choice2, handPos, currentPlayer);
 		
     case steward:
       if (choice1 == 1)
@@ -861,9 +861,8 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       discardCard(handPos, currentPlayer, state, 0);
       return 0;
 		
-    case tribute: return execute_tribute(state, nextPlayer, tributeRevealedCards, currentPlayer);
-		
-    case ambassador: return execute_ambassador(state, choice2, choice1, handPos, currentPlayer);
+    case tribute   : return execute_tribute   (state, tributeRevealedCards, currentPlayer, nextPlayer);
+    case ambassador: return execute_ambassador(state, choice1, choice2, handPos, currentPlayer);
 		
     case cutpurse:
 
@@ -1093,6 +1092,67 @@ int updateCoins(int player, struct gameState *state, int bonus)
 
 //end of dominion.c
 
+int execute_ambassador (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer)
+{
+  int j = 0;
+  int i = 0;
+      j = 0;		//used to check if player has enough cards to discard
+
+      if (choice2 > 2 || choice2 < 0)
+	{
+	  return -1;				
+	}
+
+      if (choice1 == handPos)
+	{
+	  return -1;
+	}
+
+      for (i = 0; i < state->handCount[currentPlayer]; i++)
+	{
+	  if (i != handPos && i == state->hand[currentPlayer][choice1] && i != choice1)
+	    {
+	      j++;
+	    }
+	}
+      if (j < choice2)
+	{
+	  return -1;				
+	}
+
+      if (DEBUG) 
+	printf("Player %d reveals card number: %d\n", currentPlayer, state->hand[currentPlayer][choice1]);
+
+      //increase supply count for choosen card by amount being discarded
+      state->supplyCount[state->hand[currentPlayer][choice1]] += choice2;
+			
+      //each other player gains a copy of revealed card
+      for (i = 0; i < state->numPlayers; i++)
+	{
+	  if (i != currentPlayer)
+	    {
+	      gainCard(state->hand[currentPlayer][choice1], state, 0, i);
+	    }
+	}
+
+      //discard played card from hand
+      discardCard(handPos, currentPlayer, state, 0);			
+
+      //trash copies of cards returned to supply
+      for (j = 0; j < choice2; j++)
+	{
+	  for (i = 0; i < state->handCount[currentPlayer]; i++)
+	    {
+	      if (state->hand[currentPlayer][i] == state->hand[currentPlayer][choice1])
+		{
+		  discardCard(i, currentPlayer, state, 1);
+		  break;
+		}
+	    }
+	}			
+      return 0;
+}
+
 int execute_baron(struct gameState *state, int choice1, int currentPlayer)
 {
     int p = 0;                  // Iterator for hand.
@@ -1157,7 +1217,46 @@ int execute_baron(struct gameState *state, int choice1, int currentPlayer)
     return 0;
 }
 
-int execute_minion(struct gameState *state, int handPos, int currentPlayer, int choice1, int choice2)
+int execute_mine (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer)
+{
+  int j = 0;
+  int i = 0;
+      j = state->hand[currentPlayer][choice1];  //store card we will trash
+
+      if (state->hand[currentPlayer][choice1] < copper || state->hand[currentPlayer][choice1] > gold)
+	{
+	  return -1;
+	}
+		
+      if (choice2 > treasure_map || choice2 < curse)
+	{
+	  return -1;
+	}
+
+      if ( (getCost(state->hand[currentPlayer][choice1]) + 3) > getCost(choice2) )
+	{
+	  return -1;
+	}
+
+      gainCard(choice2, state, 2, currentPlayer);
+
+      //discard card from hand
+      discardCard(handPos, currentPlayer, state, 0);
+
+      //discard trashed card
+      for (i = 0; i < state->handCount[currentPlayer]; i++)
+	{
+	  if (state->hand[currentPlayer][i] == j)
+	    {
+	      discardCard(i, currentPlayer, state, 0);			
+	      break;
+	    }
+	}
+			
+      return 0;
+}
+
+int execute_minion (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer)
 {
   int i = 0; // Iterator
   int j = 0; // Iterator
@@ -1212,68 +1311,8 @@ int execute_minion(struct gameState *state, int handPos, int currentPlayer, int 
           return 0;
 }
 
-int execute_ambassador(struct gameState *state, int choice2, int choice1, int handPos, int currentPlayer)
-{
-  int j = 0;
-  int i = 0;
-      j = 0;		//used to check if player has enough cards to discard
 
-      if (choice2 > 2 || choice2 < 0)
-	{
-	  return -1;				
-	}
-
-      if (choice1 == handPos)
-	{
-	  return -1;
-	}
-
-      for (i = 0; i < state->handCount[currentPlayer]; i++)
-	{
-	  if (i != handPos && i == state->hand[currentPlayer][choice1] && i != choice1)
-	    {
-	      j++;
-	    }
-	}
-      if (j < choice2)
-	{
-	  return -1;				
-	}
-
-      if (DEBUG) 
-	printf("Player %d reveals card number: %d\n", currentPlayer, state->hand[currentPlayer][choice1]);
-
-      //increase supply count for choosen card by amount being discarded
-      state->supplyCount[state->hand[currentPlayer][choice1]] += choice2;
-			
-      //each other player gains a copy of revealed card
-      for (i = 0; i < state->numPlayers; i++)
-	{
-	  if (i != currentPlayer)
-	    {
-	      gainCard(state->hand[currentPlayer][choice1], state, 0, i);
-	    }
-	}
-
-      //discard played card from hand
-      discardCard(handPos, currentPlayer, state, 0);			
-
-      //trash copies of cards returned to supply
-      for (j = 0; j < choice2; j++)
-	{
-	  for (i = 0; i < state->handCount[currentPlayer]; i++)
-	    {
-	      if (state->hand[currentPlayer][i] == state->hand[currentPlayer][choice1])
-		{
-		  discardCard(i, currentPlayer, state, 1);
-		  break;
-		}
-	    }
-	}			
-      return 0;
-}
-
-int execute_tribute(struct gameState *state, int nextPlayer, int *tributeRevealedCards, int currentPlayer)
+int execute_tribute (struct gameState *state, int *tributeRevealedCards, int currentPlayer, int nextPlayer)
 {
   int i = 0;
       if ((state->discardCount[nextPlayer] + state->deckCount[nextPlayer]) <= 1){
@@ -1335,41 +1374,3 @@ int execute_tribute(struct gameState *state, int nextPlayer, int *tributeReveale
       return 0;
 }
 
-int execute_mine(struct gameState *state, int currentPlayer, int choice1, int choice2, int handPos)
-{
-  int j = 0;
-  int i = 0;
-      j = state->hand[currentPlayer][choice1];  //store card we will trash
-
-      if (state->hand[currentPlayer][choice1] < copper || state->hand[currentPlayer][choice1] > gold)
-	{
-	  return -1;
-	}
-		
-      if (choice2 > treasure_map || choice2 < curse)
-	{
-	  return -1;
-	}
-
-      if ( (getCost(state->hand[currentPlayer][choice1]) + 3) > getCost(choice2) )
-	{
-	  return -1;
-	}
-
-      gainCard(choice2, state, 2, currentPlayer);
-
-      //discard card from hand
-      discardCard(handPos, currentPlayer, state, 0);
-
-      //discard trashed card
-      for (i = 0; i < state->handCount[currentPlayer]; i++)
-	{
-	  if (state->hand[currentPlayer][i] == j)
-	    {
-	      discardCard(i, currentPlayer, state, 0);			
-	      break;
-	    }
-	}
-			
-      return 0;
-}
