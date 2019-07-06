@@ -1097,61 +1097,47 @@ int updateCoins(int player, struct gameState *state, int bonus)
 
 int execute_ambassador (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer)
 {
-  int i = 0;
-  int j = 0;		//used to check if player has enough cards to discard
+  //DECLARATIONS//
+  int i;    // Iterator.
+  int j;	// Used to check if player has enough cards to discard. BUG: indeterminate value.
+//int j = 0;
 
-  if (choice2 > 2 || choice2 < 0)
-  {
-    return -1;				
-  }
+  //ERROR CHECKS//
+  // CHECK 1: "Reveal a card from your hand."
+  //          Ensure the revealed card is NOT the same Ambassador card just played.
+  //          BUG: Removing this check allows a player to play the card AND target the just-played card.
+  // CHECK 2: "Return up to 2 copies of it from your hand to supply."
+  //          Ensure cards to return is either 1 or 2.
+  // CHECK 3: Ensure player has the requisite number of cards-in-hand to return to supply.
+//if (choice1 == handPos)         return -1;    // (CHECK 1)
+  if (choice2 < 0 || choice2 > 2) return -1;    // (CHECK 2)
 
-  if (choice1 == handPos)
-  {
-    return -1;
-  }
-
+  // For each other card in player's hand, increment j if that card is equivalent to the revealed card.
   for (i = 0; i < state->handCount[currentPlayer]; i++)
-  {
-    if (i != handPos && i == state->hand[currentPlayer][choice1] && i != choice1)
-    {
-      j++;
-    }
-  }
+    if (i != handPos && i != choice1 && i == state->hand[currentPlayer][choice1]) j++;
 
-  if (j < choice2)
-  {
-    return -1;				
-  }
+  if (j < choice2) return -1;                   // (CHECK 3)
 
-  if (DEBUG) 
-    printf("Player %d reveals card number: %d\n", currentPlayer, state->hand[currentPlayer][choice1]);
+  if (DEBUG) printf("Player %d reveals card number: %d\n", currentPlayer, state->hand[currentPlayer][choice1]);
 
-  //increase supply count for choosen card by amount being discarded
-  state->supplyCount[state->hand[currentPlayer][choice1]] += choice2;
+  //MAIN OPERATION//
+  // Increase revealed-card supply by number discarded.
+  state->supplyCount[ state->hand[currentPlayer][choice1] ] += choice2;
 
-  //each other player gains a copy of revealed card
+  // Each other player gains a copy of the revealed card.
   for (i = 0; i < state->numPlayers; i++)
-  {
     if (i != currentPlayer)
-    {
       gainCard(state->hand[currentPlayer][choice1], state, 0, i);
-    }
-  }
 
-  //discard played card from hand
+  // Remove the just-played Ambassador from player's hand. 
   discardCard(handPos, currentPlayer, state, 0);			
 
-  //trash copies of cards returned to supply
+  // Trash copies of cards returned to supply.
   for (j = 0; j < choice2; j++)
-  {
     for (i = 0; i < state->handCount[currentPlayer]; i++)
-    {
       if (state->hand[currentPlayer][i] == state->hand[currentPlayer][choice1])
-      {
         discardCard(i, currentPlayer, state, 1);
-      }
-    }
-  }			
+
   return 0;
 }
 
