@@ -5,8 +5,8 @@
 #include <math.h>
 #include <stdlib.h>
 
-void execute_baron(struct gameState *state, int choice1, int currentPlayer);
-void execute_minion(struct gameState *state, int handPos, int currentPlayer, int choice1, int choice2);
+int execute_baron(struct gameState *state, int choice1, int currentPlayer);
+int execute_minion(struct gameState *state, int handPos, int currentPlayer, int choice1, int choice2);
 int execute_ambassador(struct gameState *state, int choice2, int choice1, int handPos, int currentPlayer);
 int execute_tribute(struct gameState *state, int nextPlayer, int *tributeRevealedCards, int currentPlayer);
 int execute_mine(struct gameState *state, int currentPlayer, int choice1, int choice2, int handPos);
@@ -823,7 +823,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       discardCard(handPos, currentPlayer, state, 0);
       return 0;
 		
-    case baron: execute_baron(state, choice1, currentPlayer); return 0;
+    case baron: return execute_baron(state, choice1, currentPlayer);
 		
     case great_hall:
       //+1 Card
@@ -836,7 +836,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       discardCard(handPos, currentPlayer, state, 0);
       return 0;
 		
-    case minion: execute_minion(state, handPos, currentPlayer, choice1, choice2); return 0;
+    case minion: return execute_minion(state, handPos, currentPlayer, choice1, choice2);
 		
     case steward:
       if (choice1 == 1)
@@ -1093,7 +1093,7 @@ int updateCoins(int player, struct gameState *state, int bonus)
 
 //end of dominion.c
 
-void execute_baron(struct gameState *state, int choice1, int currentPlayer)
+int execute_baron(struct gameState *state, int choice1, int currentPlayer)
 {
     int p = 0;                  // Iterator for hand.
     int card_not_discarded = 1; // Flag for discard set.
@@ -1154,9 +1154,10 @@ void execute_baron(struct gameState *state, int choice1, int currentPlayer)
         }
       }
     }
+    return 0;
 }
 
-void execute_minion(struct gameState *state, int handPos, int currentPlayer, int choice1, int choice2)
+int execute_minion(struct gameState *state, int handPos, int currentPlayer, int choice1, int choice2)
 {
   int i = 0; // Iterator
   int j = 0; // Iterator
@@ -1208,6 +1209,7 @@ void execute_minion(struct gameState *state, int handPos, int currentPlayer, int
               }
                       
           }
+          return 0;
 }
 
 int execute_ambassador(struct gameState *state, int choice2, int choice1, int handPos, int currentPlayer)
