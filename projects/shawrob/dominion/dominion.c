@@ -1230,7 +1230,7 @@ int execute_minion (struct gameState *state, int choice1, int choice2, int handP
   int i = 0; // Iterator
   int j = 0; // Iterator
 
-  //MAIN OPERATIONS//
+  //MAIN OPERATION//
   //OPTION 1: Add two coins.
   //OPTION 2: Discard hand, redraw 4, and all other players with 5+ cards do the same.
   state->numActions++;                                                              // +1 Action.
@@ -1259,8 +1259,13 @@ int execute_minion (struct gameState *state, int choice1, int choice2, int handP
 
 int execute_tribute (struct gameState *state, int *tributeRevealedCards, int currentPlayer, int nextPlayer)
 {
-  int i = 0;
-  if ((state->discardCount[nextPlayer] + state->deckCount[nextPlayer]) <= 1)
+  //DECLARATIONS//
+  int i = 0;    // Iterator.
+  
+  //MAIN OPERATION//
+  // STEP 1: Ensure opponent has cards to reveal.
+  /* BUG: Will break if player does not have cards to reveal.
+  if ( (state->discardCount[nextPlayer] + state->deckCount[nextPlayer] ) <= 1)
   {
     if (state->deckCount[nextPlayer] > 0)
     {
@@ -1272,16 +1277,10 @@ int execute_tribute (struct gameState *state, int *tributeRevealedCards, int cur
       tributeRevealedCards[0] = state->discard[nextPlayer][state->discardCount[nextPlayer]-1];
       state->discardCount[nextPlayer]--;
     }
-    else
-    {
-      //No Card to Reveal
-      if (DEBUG)
-      {
-        printf("No cards to reveal\n");
-      }
-    }
+    else if (DEBUG) printf("No cards to reveal\n");
   }
-  else
+  // STEP 2: Reveal the cards.
+  else */
   {
     if (state->deckCount[nextPlayer] == 0)
     {
@@ -1292,10 +1291,8 @@ int execute_tribute (struct gameState *state, int *tributeRevealedCards, int cur
         state->discard[nextPlayer][i] = -1;
         state->discardCount[nextPlayer]--;
       }
-
       shuffle(nextPlayer,state);//Shuffle the deck
     } 
-
     tributeRevealedCards[0] = state->deck[nextPlayer][state->deckCount[nextPlayer]-1];
     state->deck[nextPlayer][state->deckCount[nextPlayer]--] = -1;
     state->deckCount[nextPlayer]--;
@@ -1305,18 +1302,22 @@ int execute_tribute (struct gameState *state, int *tributeRevealedCards, int cur
   }    
 
   if (tributeRevealedCards[0] == tributeRevealedCards[1])
-  {//If we have a duplicate card, just drop one 
+  {     //If we have a duplicate card, just drop one 
     state->playedCards[state->playedCardCount] = tributeRevealedCards[1];
     state->playedCardCount++;
     tributeRevealedCards[1] = -1;
   }
 
-  for (i = 0; i <= 2; i ++)
+  // STEP 3: Assign appropriate benefits.
+//for (i = 0; i <= 2; i ++)     // BUG: Only one benefit will be gained.
+  for (i = 0; i < 2; i ++)
   {
-    if (tributeRevealedCards[i] == copper || tributeRevealedCards[i] == silver || tributeRevealedCards[i] == gold)
-    {     //Treasure cards
-      state->coins += 2;
-    }
+    if
+    (
+      tributeRevealedCards[i] == copper ||
+      tributeRevealedCards[i] == silver ||
+      tributeRevealedCards[i] == gold
+    ) state->coins += 2;
     else if 
     (
       tributeRevealedCards[i] == estate     ||
@@ -1329,10 +1330,7 @@ int execute_tribute (struct gameState *state, int *tributeRevealedCards, int cur
       drawCard(currentPlayer, state);
       drawCard(currentPlayer, state);
     }
-    else
-    {     //Action Card
-      state->numActions = state->numActions + 2;
-    }
+    else state->numActions = state->numActions + 2;
   }
 
   return 0;
