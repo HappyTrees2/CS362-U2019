@@ -198,7 +198,7 @@ testResult gaining_an_estate_reduces_supply_by_1(struct gameState gameState)
   supplyAfter = testState.supplyCount[estate];
   noisyprint("\tsupplyAfter = %d\n", supplyAfter);
 
-  if(supplyAfter == supplyBefore + 1)
+  if(supplyAfter == supplyBefore - 1)
     return success;
   else
     return failure;
