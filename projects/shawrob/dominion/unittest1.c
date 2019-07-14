@@ -6,7 +6,11 @@
 #define success 1
 #define failure 0
 
-#define NOISY_TEST 1
+#define bool  int
+#define true  1
+#define false 0
+
+bool NOISY_TEST = false;
 #define noisyprint if(NOISY_TEST) printf
 
 char testTitle[256];
@@ -229,8 +233,11 @@ testResult returning_an_estate_increases_supply_by_1(struct gameState gameState)
     return failure;
 }
 
-int main(){
+int main(int argc, char *argv[]){
+  if (argc > 1 && strcmp(argv[1], "-n") == 0) NOISY_TEST = true;
+
   printf("\n===BEGIN TEST SUITE FOR CARD: BARON===\n");
+  if(!NOISY_TEST) printf("For noisy test: %s -n\n\n", argv[0]);
 
   struct gameState gameState;
 
