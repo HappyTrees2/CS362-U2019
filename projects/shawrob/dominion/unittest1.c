@@ -46,6 +46,31 @@ testResult playing_baron_removes_it_from_players_hand(struct gameState gameState
     return failure;
 }
 
+testResult playing_baron_adds_one_buy(struct gameState gameState)
+{
+  noisyprint("Playing Baron adds +1 buy:\n");
+  struct gameState testState;
+  memcpy(&testState, &gameState, sizeof(struct gameState));
+  memset(testTitle, '\0', 256);
+  if(!NOISY_TEST) strncpy(testTitle, "Playing Baron adds +1 buy.", 255);
+
+  int buysBefore = 0;
+  int buysAfter  = 0;
+
+  buysBefore = testState.numBuys;
+  noisyprint("\tBuys before = %d\n", buysBefore);
+
+  playCard(0, 0, 0, 0, &testState);
+
+  buysAfter = testState.numBuys;
+  noisyprint("\tBuys after  = %d\n", buysAfter);
+
+  if(buysAfter == buysBefore + 1)
+    return success;
+  else
+    return failure;
+}
+
 int main(){
   printf("\n===BEGIN TEST SUITE FOR CARD: BARON===\n");
 
@@ -60,7 +85,7 @@ int main(){
   gameState.hand[0][0] = baron;
 
   assert_true( playing_baron_removes_it_from_players_hand(gameState) );
-  // Playing Baron adds +1 buy.
+  assert_true( playing_baron_adds_one_buy(gameState) );
   // Discarding an Estate (with one in hand) removes an Estate from hand.
   // Discarding an Estate (with one in hand) gives +4 coins.
   // Discarding an Estate (without one in hand) gains an Estate.
