@@ -107,6 +107,31 @@ testResult ambassador_mode_1_adds_1_card_to_supply(struct gameState gameState)
   supplyAfter = testState.supplyCount[copper];
   noisyprint("\tsupplyAfter = %d\n", supplyAfter);
 
+  if(supplyAfter == supplyBefore)
+    return success;
+  else
+    return failure;
+}
+
+testResult ambassador_mode_2_adds_2_cards_to_supply(struct gameState gameState)
+{
+  noisyprint("Playing Ambassador returning 2 cards adds 2 to supply:\n");
+  struct gameState testState;
+  memcpy(&testState, &gameState, sizeof(struct gameState));
+  memset(testTitle, '\0', 256);
+  if(!NOISY_TEST) strncpy(testTitle, "Playing Ambassador returning 2 cards adds 2 to supply.", 255);
+
+  int supplyBefore = 0;
+  int supplyAfter  = 0;
+
+  supplyBefore = testState.supplyCount[copper];
+  noisyprint("\tsupplyBefore = %d\n", supplyBefore);
+
+  playCard(0, 2, 0, 1, &testState);
+
+  supplyAfter = testState.supplyCount[copper];
+  noisyprint("\tsupplyAfter = %d\n", supplyAfter);
+
   if(supplyAfter == supplyBefore + 1)
     return success;
   else
@@ -133,6 +158,7 @@ int main(int argc, char *argv[]){
   assert_true( ambassador_mode_1_removes_1_card_from_hand(gameState) );
   assert_true( ambassador_mode_2_removes_2_cards_from_hand(gameState) );
   assert_true( ambassador_mode_1_adds_1_card_to_supply(gameState) );
+  assert_true( ambassador_mode_2_adds_2_cards_to_supply(gameState) );
 
   printf("====END TEST SUITE FOR CARD: AMBASSADOR====\n\n");
   return 0;
