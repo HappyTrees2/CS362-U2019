@@ -179,6 +179,31 @@ testResult choosing_not_to_discard_estate_gains_estate(struct gameState gameStat
     return failure;
 }
 
+testResult gaining_an_estate_reduces_supply_by_1(struct gameState gameState)
+{
+  noisyprint("Gaining an Estate reduces supply by 1:\n");
+  struct gameState testState;
+  memcpy(&testState, &gameState, sizeof(struct gameState));
+  memset(testTitle, '\0', 256);
+  if(!NOISY_TEST) strncpy(testTitle, "Gaining an Estate reduces supply by 1.", 255);
+
+  int supplyBefore = 0;
+  int supplyAfter  = 0;
+
+  supplyBefore = testState.supplyCount[estate];
+  noisyprint("\tsupplyBefore = %d\n", supplyBefore);
+
+  playCard(0, 1, 0, 0, &testState);
+
+  supplyAfter = testState.supplyCount[estate];
+  noisyprint("\tsupplyAfter = %d\n", supplyAfter);
+
+  if(supplyAfter == supplyBefore + 1)
+    return success;
+  else
+    return failure;
+}
+
 int main(){
   printf("\n===BEGIN TEST SUITE FOR CARD: BARON===\n");
 
@@ -198,7 +223,7 @@ int main(){
   assert_true( discarding_a_valid_estate_gains_4_coins(gameState) );
   assert_true( discarding_an_estate_with_invalid_hand_gains_estate(gameState) );
   assert_true( choosing_not_to_discard_estate_gains_estate(gameState) );
-  // Gaining an Estate reduces supply by 1.
+  assert_true( gaining_an_estate_reduces_supply_by_1(gameState) );
   // Returning an Estate increases supply by 1.
 
   printf("====END TEST SUITE FOR CARD: BARON====\n\n");
