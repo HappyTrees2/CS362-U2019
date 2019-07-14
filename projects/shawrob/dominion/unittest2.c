@@ -34,10 +34,35 @@ testResult first_test_returns_success(struct gameState gameState)
   return success;
 }
 
+testResult playing_minion_adds_1_action(struct gameState gameState)
+{
+  noisyprint("Playing Minion adds +1 action:\n");
+  struct gameState testState;
+  memcpy(&testState, &gameState, sizeof(struct gameState));
+  memset(testTitle, '\0', 256);
+  if(!NOISY_TEST) strncpy(testTitle, "Playing Minion adds +1 action.", 255);
+
+  int actionsBefore = 0;
+  int actionsAfter  = 0;
+
+  actionsBefore = testState.numActions;
+  noisyprint("\tactionsBefore = %d\n", actionsBefore);
+
+  playCard(0, 0, 0, 0, &testState);
+
+  actionsAfter = testState.numActions;
+  noisyprint("\tactionsAfter  = %d\n", actionsAfter);
+
+  if(actionsAfter == actionsBefore)
+    return success;
+  else
+    return failure;
+}
+
 int main(int argc, char *argv[]){
   if (argc > 1 && strcmp(argv[1], "-n") == 0) NOISY_TEST = true;
 
-  printf("\n===BEGIN TEST SUITE FOR CARD: BARON===\n");
+  printf("\n===BEGIN TEST SUITE FOR CARD: MINION===\n");
   if(!NOISY_TEST) printf("For noisy test: %s -n\n\n", argv[0]);
 
   struct gameState gameState;
@@ -51,8 +76,8 @@ int main(int argc, char *argv[]){
   gameState.hand[0][0] = minion;
 
   assert_true( first_test_returns_success(gameState) );
+  assert_true( playing_minion_adds_1_action(gameState) );
 
-
-  printf("====END TEST SUITE FOR CARD: BARON====\n\n");
+  printf("====END TEST SUITE FOR CARD: MINION====\n\n");
   return 0;
 }
