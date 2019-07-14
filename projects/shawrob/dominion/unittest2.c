@@ -109,6 +109,31 @@ testResult minion_choice_2_adds_4_cards(struct gameState gameState)
     return failure;
 }
 
+testResult minion_choice_2_sets_enemy_hands_to_4(struct gameState gameState)
+{
+  noisyprint("Minion choice 2 sets enemy hands to 4:\n");
+  struct gameState testState;
+  memcpy(&testState, &gameState, sizeof(struct gameState));
+  memset(testTitle, '\0', 256);
+  if(!NOISY_TEST) strncpy(testTitle, "Minion choice 2 sets enemy hands to 4.", 255);
+
+  int cardsBefore = 0;
+  int cardsAfter  = 0;
+
+  cardsBefore = testState.handCount[1];
+  noisyprint("\tcardsBefore = %d\n", cardsBefore);
+
+  playCard(0, 0, 1, 0, &testState);
+
+  cardsAfter = testState.handCount[1];
+  noisyprint("\tcardsAfter = %d\n", cardsAfter);
+
+  if(cardsAfter == 4)
+    return success;
+  else
+    return failure;
+}
+
 int main(int argc, char *argv[]){
   if (argc > 1 && strcmp(argv[1], "-n") == 0) NOISY_TEST = true;
 
@@ -129,6 +154,7 @@ int main(int argc, char *argv[]){
   assert_true( playing_minion_adds_1_action(gameState) );
   assert_true( minion_choice_1_adds_2_coins(gameState) );
   assert_true( minion_choice_2_adds_4_cards(gameState) );
+  assert_true( minion_choice_2_sets_enemy_hands_to_4(gameState) );
 
   printf("====END TEST SUITE FOR CARD: MINION====\n\n");
   return 0;
