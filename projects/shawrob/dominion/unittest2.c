@@ -23,9 +23,15 @@ void assert_true(testResult result)
     printf("- FAIL\t%s\n", testTitle);
 }
 
-testResult first_test(struct gameState gameState)
+testResult first_test_returns_success(struct gameState gameState)
 {
-  return failure;
+  noisyprint("First test returns success:\n");
+  struct gameState testState;
+  memcpy(&testState, &gameState, sizeof(struct gameState));
+  memset(testTitle, '\0', 256);
+  if(!NOISY_TEST) strncpy(testTitle, "First test returns success.", 255);
+
+  return success;
 }
 
 int main(int argc, char *argv[]){
@@ -44,7 +50,8 @@ int main(int argc, char *argv[]){
   initializeGame(NUM_PLAYERS, kingdom, RNG_SEED, &gameState);
   gameState.hand[0][0] = minion;
 
-  assert_true( first_test(gameState) );
+  assert_true( first_test_returns_success(gameState) );
+
 
   printf("====END TEST SUITE FOR CARD: BARON====\n\n");
   return 0;
