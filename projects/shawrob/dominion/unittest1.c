@@ -98,6 +98,31 @@ testResult discarding_a_valid_estate_removes_one_from_hand(struct gameState game
     return failure;
 }
 
+testResult discarding_a_valid_estate_gains_4_coins(struct gameState gameState)
+{
+  noisyprint("Discarding a valid estate gains 4 coins:\n");
+  struct gameState testState;
+  memcpy(&testState, &gameState, sizeof(struct gameState));
+  memset(testTitle, '\0', 256);
+  if(!NOISY_TEST) strncpy(testTitle, "Discarding a valid estate gains 4 coins.", 255);
+
+  int coinsBefore = 0;
+  int coinsAfter  = 0;
+
+  coinsBefore = testState.coins;
+  noisyprint("\tcoinsBefore = %d\n", coinsBefore);
+
+  playCard(0, 1, 0, 0, &testState);
+
+  coinsAfter = testState.coins;
+  noisyprint("\tcoinsAfter = %d\n", coinsAfter);
+
+  if(coinsAfter == coinsBefore + 4)
+    return success;
+  else
+    return failure;
+}
+
 int main(){
   printf("\n===BEGIN TEST SUITE FOR CARD: BARON===\n");
 
@@ -114,7 +139,7 @@ int main(){
   assert_true( playing_baron_removes_it_from_players_hand(gameState) );
   assert_true( playing_baron_adds_one_buy(gameState) );
   assert_true( discarding_a_valid_estate_removes_one_from_hand(gameState) );
-  // Discarding an Estate (with one in hand) gives +4 coins.
+  assert_true( discarding_a_valid_estate_gains_4_coins(gameState) );
   // Discarding an Estate (without one in hand) gains an Estate.
   // Choosing not to discard an Estate gains an Estate.
   // Gaining an Estate reduces supply by 1.
