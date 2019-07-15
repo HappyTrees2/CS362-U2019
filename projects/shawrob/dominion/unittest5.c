@@ -34,6 +34,33 @@ testResult first_test_returns_success(struct gameState gameState)
   return success;
 }
 
+testResult mine_trashes_chosen_treasure(struct gameState gameState)
+{
+  noisyprint("Mine trashes chosen treasure:\n");
+  struct gameState testState;
+  memcpy(&testState, &gameState, sizeof(struct gameState));
+  memset(testTitle, '\0', 256);
+  if(!NOISY_TEST) strncpy(testTitle, "Mine trashes chosen treasure.", 255);
+
+  int copperBefore = 0;
+  int copperAfter  = 0;
+
+  for(int i = 0; i < testState.handCount[0]; i++)
+    if(testState.hand[0][i] == copper) ++copperBefore;
+  noisyprint("copperBefore = %d\n", copperBefore);
+
+  playCard(0, 1, 0, 0, &testState);
+
+  for(int i = 0; i < testState.handCount[0]; i++)
+    if(testState.hand[0][i] == copper) ++copperAfter;
+  noisyprint("copperAfter = %d\n", copperAfter);
+
+  if(copperAfter == copperBefore - 1)
+    return success;
+  else
+    return failure;
+}
+
 int main(int argc, char *argv[]){
   if (argc > 1 && strcmp(argv[1], "-n") == 0) NOISY_TEST = true;
 
@@ -51,6 +78,7 @@ int main(int argc, char *argv[]){
   gameState.hand[0][0] = mine;
 
   assert_true( first_test_returns_success(gameState) );
+  assert_true( mine_trashes_chosen_treasure(gameState) );
 
   printf("====END TEST SUITE FOR CARD: MINE====\n\n");
   return 0;
