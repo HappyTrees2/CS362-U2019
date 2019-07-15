@@ -23,22 +23,11 @@ void assert_true(testResult result)
     printf("- FAIL\t%s\n", testTitle);
 }
 
-testResult first_test_returns_success(struct gameState gameState)
+testResult first_test_returns_success()
 {
   noisyprint("First test returns success:\n");
-  struct gameState testState;
-  memcpy(&testState, &gameState, sizeof(struct gameState));
   memset(testTitle, '\0', 256);
   if(!NOISY_TEST) strncpy(testTitle, "First test returns success.", 255);
-
-  return success;
-}
-
-int main(int argc, char *argv[]){
-  if (argc > 1 && strcmp(argv[1], "-n") == 0) NOISY_TEST = true;
-
-  printf("\n===BEGIN TEST SUITE FOR CARD: MINE===\n");
-  if(!NOISY_TEST) printf("For noisy test: %s -n\n\n", argv[0]);
 
   struct gameState gameState;
 
@@ -48,10 +37,18 @@ int main(int argc, char *argv[]){
   int kingdom[10] = {adventurer, embargo, village, minion, mine, cutpurse, sea_hag, tribute, smithy, council_room};
 
   initializeGame(NUM_PLAYERS, kingdom, RNG_SEED, &gameState);
-  gameState.hand[0][0] = mine;
 
-  assert_true( first_test_returns_success(gameState) );
+  return success;
+}
 
-  printf("====END TEST SUITE FOR CARD: MINE====\n\n");
+int main(int argc, char *argv[]){
+  if (argc > 1 && strcmp(argv[1], "-n") == 0) NOISY_TEST = true;
+
+  printf("\n===BEGIN TEST SUITE FOR CARD: INITIALIZEGAME===\n");
+  if(!NOISY_TEST) printf("For noisy test: %s -n\n\n", argv[0]);
+
+  assert_true( first_test_returns_success() );
+
+  printf("====END TEST SUITE FOR CARD: INITIALIZEGAME====\n\n");
   return 0;
 }
