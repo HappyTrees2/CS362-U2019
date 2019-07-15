@@ -34,6 +34,31 @@ testResult first_test_returns_success(struct gameState gameState)
   return success;
 }
 
+testResult draw_card_increases_card_count(struct gameState gameState)
+{
+  noisyprint("Card draw increases cards in hand:\n");
+  struct gameState testState;
+  memcpy(&testState, &gameState, sizeof(struct gameState));
+  memset(testTitle, '\0', 256);
+  if(!NOISY_TEST) strncpy(testTitle, "Card draw increases cards in hand.", 255);
+
+  int cardsBefore = 0;
+  int cardsAfter  = 0;
+
+  cardsBefore = testState.handCount[0];
+  noisyprint("cardsBefore = %d\n", cardsBefore);
+
+  drawCard(0, &gameState);
+
+  cardsAfter = testState.handCount[0];
+  noisyprint("cardsAfter = %d\n", cardsAfter);
+
+  if(cardsAfter == cardsBefore + 1)
+    return success;
+  else
+    return failure;
+}
+
 int main(int argc, char *argv[]){
   if (argc > 1 && strcmp(argv[1], "-n") == 0) NOISY_TEST = true;
 
@@ -50,6 +75,7 @@ int main(int argc, char *argv[]){
   initializeGame(NUM_PLAYERS, kingdom, RNG_SEED, &gameState);
 
   assert_true( first_test_returns_success(gameState) );
+  assert_true( draw_card_increases_card_count(gameState) );
 
   printf("====END TEST SUITE FOR FUNCTION: DRAWCARD====\n\n");
   return 0;
