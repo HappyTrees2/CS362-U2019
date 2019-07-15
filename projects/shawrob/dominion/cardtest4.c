@@ -34,6 +34,29 @@ testResult first_test_returns_success(struct gameState gameState)
   return success;
 }
 
+testResult ties_marked_correctly(struct gameState gameState)
+{
+  noisyprint("Ties marked correctly:\n");
+  struct gameState testState;
+  memcpy(&testState, &gameState, sizeof(struct gameState));
+  memset(testTitle, '\0', 256);
+  if(!NOISY_TEST) strncpy(testTitle, "Ties marked correctly.", 255);
+
+  int players[2] = {0};
+  for(int i = 0; i < 2; i++)
+    noisyprint("\tplayer[%d] = %d\n", i, players[i]);
+
+  getWinners(players, &testState);
+
+  for(int i = 0; i < 2; i++)
+    noisyprint("\tplayer[%d] = %d\n", i, players[i]);
+
+  if(players[0] == players[1])
+    return success;
+  else
+    return failure;
+}
+
 int main(int argc, char *argv[]){
   if (argc > 1 && strcmp(argv[1], "-n") == 0) NOISY_TEST = true;
 
@@ -50,6 +73,7 @@ int main(int argc, char *argv[]){
   initializeGame(NUM_PLAYERS, kingdom, RNG_SEED, &gameState);
 
   assert_true( first_test_returns_success(gameState) );
+  assert_true( ties_marked_correctly(gameState) );
 
   printf("====END TEST SUITE FOR FUNCTION: GETWINNERS====\n\n");
   return 0;
