@@ -65,6 +65,37 @@ testResult tribute_action_treasure_draw_adds_2_actions_and_2_coins(struct gameSt
     return failure;
 }
 
+testResult tribute_treasure_victory_adds_2_coins_and_2_cards(struct gameState gameState)
+{
+  noisyprint("Tribute adds 2 coins and 2 cards when appropriate:\n");
+  struct gameState testState;
+  memcpy(&testState, &gameState, sizeof(struct gameState));
+  memset(testTitle, '\0', 256);
+  if(!NOISY_TEST) strncpy(testTitle, "Tribute adds 2 coins and 2 cards when appropriate.", 255);
+
+  int coinsBefore = 0;
+  int cardsBefore = 0;
+  int coinsAfter  = 0;
+  int cardsAfter  = 0;
+
+  coinsBefore = testState.coins;
+  cardsBefore = testState.handCount[0];
+  noisyprint("\tcoinsBefore = %d\n", coinsBefore);
+  noisyprint("\tcardsBefore = %d\n", cardsBefore);
+
+  playCard(0, 0, 0, 0, &testState);
+
+  coinsAfter = testState.coins;
+  cardsAfter = testState.handCount[0];
+  noisyprint("\tcoinsAfter  = %d\n", coinsAfter);
+  noisyprint("\tcardsAfter  = %d\n", cardsAfter); 
+
+  if(coinsAfter == coinsBefore + 2 && cardsAfter == cardsBefore + 2)
+    return success;
+  else
+    return failure;
+}
+
 int main(int argc, char *argv[]){
   if (argc > 1 && strcmp(argv[1], "-n") == 0) NOISY_TEST = true;
 
@@ -86,6 +117,7 @@ int main(int argc, char *argv[]){
   gameState.deck[1][0] = estate;
   gameState.deck[1][1] = copper;
   assert_true( tribute_action_treasure_draw_adds_2_actions_and_2_coins(gameState) );
+  assert_true( tribute_treasure_victory_adds_2_coins_and_2_cards(gameState) );
 
   printf("====END TEST SUITE FOR CARD: TRIBUTE====\n\n");
   return 0;
