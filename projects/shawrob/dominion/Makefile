@@ -62,6 +62,28 @@ cardtest4: cardtest4.c dominion.o rngs.o
 cardtest5: cardtest5.c dominion.o rngs.o
 	gcc -o cardtest5 -g cardtest5.c dominion.o rngs.o ${CFLAGS}
 
+unittestresults: unittest1 unittest2 unittest3 unittest4 unittest5 cardtest1 cardtest2 cardtest3 cardtest4 cardtest5
+	./unittest1 &> unittestresults.out
+	gcov -b dominion.c >> unittestresults.out
+	./unittest2 &>> unittestresults.out
+	gcov -b dominion.c >> unittestresults.out
+	./unittest3 &>> unittestresults.out
+	gcov -b dominion.c >> unittestresults.out
+	./unittest4 &>> unittestresults.out
+	gcov -b dominion.c >> unittestresults.out
+	./unittest5 &>> unittestresults.out
+	gcov -b dominion.c >> unittestresults.out
+	./cardtest1 &>> unittestresults.out
+	gcov -b dominion.c >> unittestresults.out
+	./cardtest2 &>> unittestresults.out
+	gcov -b dominion.c >> unittestresults.out
+	./cardtest3 &>> unittestresults.out
+	gcov -b dominion.c >> unittestresults.out
+	./cardtest4 &>> unittestresults.out
+	gcov -b dominion.c >> unittestresults.out
+	./cardtest5 &>> unittestresults.out
+	gcov -b dominion.c >> unittestresults.out
+
 player: player.c interface.o
 	gcc -o player player.c -g  dominion.o rngs.o interface.o $(CFLAGS)
 
