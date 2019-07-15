@@ -34,6 +34,29 @@ testResult first_test_returns_success(struct gameState gameState)
   return success;
 }
 
+testResult shuffled_deck_stays_same_size(struct gameState gameState)
+{
+  noisyprint("Shuffling a deck does not change its size:\n");
+  struct gameState testState;
+  memcpy(&testState, &gameState, sizeof(struct gameState));
+  memset(testTitle, '\0', 256);
+  if(!NOISY_TEST) strncpy(testTitle, "Shuffling a deck does not change its size.", 255);
+
+  int deckSizeBefore = 0;
+  int deckSizeAfter  = 0;
+
+  deckSizeBefore = testState.deckCount[0];
+
+  shuffle(0, &testState);
+
+  deckSizeAfter = testState.deckCount[0];
+
+  if(deckSizeAfter == deckSizeBefore)
+    return success;
+  else
+    return failure;
+}
+
 int main(int argc, char *argv[]){
   if (argc > 1 && strcmp(argv[1], "-n") == 0) NOISY_TEST = true;
 
@@ -50,6 +73,7 @@ int main(int argc, char *argv[]){
   initializeGame(NUM_PLAYERS, kingdom, RNG_SEED, &gameState);
 
   assert_true( first_test_returns_success(gameState) );
+  assert_true( shuffled_deck_stays_same_size(gameState) );
 
   printf("====END TEST SUITE FOR FUNCTION: SHUFFLE====\n\n");
   return 0;
