@@ -1163,7 +1163,10 @@ int execute_baron(struct gameState *state, int choice1, int currentPlayer)
         state->discardCount[currentPlayer]++;
 
         for (;p < state->handCount[currentPlayer]; p++) // BUG: Iterator not set to zero.
+        {
           state->hand[currentPlayer][p] = state->hand[currentPlayer][p+1];
+        }
+        printf("BREAK\n");
 
         state->hand[currentPlayer][ state->handCount[currentPlayer] ] = -1;
         state->handCount[currentPlayer]--;
