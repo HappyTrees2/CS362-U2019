@@ -3,7 +3,7 @@
 #define true  1
 #define false 0
 
-#define NUM_TEST_ITERATIONS 1000
+#define NUM_TEST_ITERATIONS 500
 
 #include <assert.h>
 #include "dominion.h"
@@ -56,7 +56,11 @@ int main(int argc, char *argv[])
     
     memcpy(&pre, &post, sizeof(struct gameState));
     execute_baron(&post, choice, player);
-    print_gameState(&pre, &post);
+    // Test results
+    if(pre.numBuys + 1 != post.numBuys) printf("FAIL numBuys not incremented\n");
+    if(pre.coins + 4 != post.coins && choice == 1) printf("FAIL coins not incremented\n");
+
+    if(NOISY_TEST) print_gameState(&pre, &post);
   }
   printf("===END   random tests for card: BARON===\n");
   return 0;
@@ -80,34 +84,59 @@ bool check_switch_noisyTest(int argc, char *argv[])
 
 void print_gameState(struct gameState *pre, struct gameState *post)
 {
-  printf("numPlayers = %d || %d\n", pre->numPlayers, post->numPlayers);
-  //int i = 0;
-  //for(i = 0; i < 27; i++)
-  //  printf("\tsupplyCount[%d] = %d\n", i, pre->supplyCount[i]);
-  //for(i = 0; i < 27; i++)
-  //  printf("\tembargoTokens[%d] = %d\n", i, pre->embargoTokens[i]);
-  printf("outpostPlayed = %d || %d\n", pre->outpostPlayed, post->outpostPlayed);
-  printf("outpostTurn = %d || %d\n", pre->outpostTurn, post->outpostTurn);
-  printf("whoseTurn = %d || %d\n", pre->whoseTurn, post->whoseTurn);
-  printf("phase = %d || %d\n", pre->phase, post->phase);
-  printf("numActions = %d || %d\n", pre->numActions, post->numActions);
-  printf("coins = %d || %d\n", pre->coins, post->coins);
-  printf("numBuys = %d || %d\n", pre->numBuys, post->numBuys);
-  printf("handCount[1] = %d || %d\n", pre->handCount[1], post->handCount[1]);
-  printf("handCount[2] = %d || %d\n", pre->handCount[2], post->handCount[2]);
-  printf("handCount[3] = %d || %d\n", pre->handCount[3], post->handCount[3]);
-  printf("handCount[4] = %d || %d\n", pre->handCount[4], post->handCount[4]);
-  printf("deckCount[1] = %d || %d\n", pre->deckCount[1], post->deckCount[1]);
-  printf("deckCount[2] = %d || %d\n", pre->deckCount[2], post->deckCount[2]);
-  printf("deckCount[3] = %d || %d\n", pre->deckCount[3], post->deckCount[3]);
-  printf("deckCount[4] = %d || %d\n", pre->deckCount[4], post->deckCount[4]);
-  printf("discardCount[1] = %d || %d\n", pre->discardCount[1], post->discardCount[1]);
-  printf("discardCount[2] = %d || %d\n", pre->discardCount[2], post->discardCount[2]);
-  printf("discardCount[3] = %d || %d\n", pre->discardCount[3], post->discardCount[3]);
-  printf("discardCount[4] = %d || %d\n", pre->discardCount[4], post->discardCount[4]);
-  printf("playedCards[1] = %d || %d\n", pre->playedCards[1], post->playedCards[1]);
-  printf("playedCards[2] = %d || %d\n", pre->playedCards[2], post->playedCards[2]);
-  printf("playedCards[3] = %d || %d\n", pre->playedCards[3], post->playedCards[3]);
-  printf("playedCards[4] = %d || %d\n", pre->playedCards[4], post->playedCards[4]);
-  printf("playedCardCount = %d || %d\n", pre->playedCardCount, post->playedCardCount);
+  printf("numPlayers = %d", pre->numPlayers);
+  if(pre->numPlayers != post->numPlayers) printf(" || %d", post->numPlayers);
+  printf("\n");
+
+  printf("outpostPlayed = %d", pre->outpostPlayed);
+  if(pre->outpostPlayed != post->outpostPlayed) printf("|| %d", post->outpostPlayed);
+  printf("\n");
+
+  printf("outpostTurn = %d", pre->outpostTurn);
+  if(pre->outpostTurn != post->outpostTurn) printf(" || %d", post->outpostTurn);
+  printf("\n");
+
+  printf("whoseTurn = %d", pre->whoseTurn);
+  if(pre->whoseTurn != post->whoseTurn) printf(" || %d", post->whoseTurn);
+  printf("\n");
+
+  printf("phase = %d", pre->phase);
+  if(pre->phase != post->phase) printf(" || %d", post->phase);
+  printf("\n");
+  
+  printf("numActions = %d", pre->numActions);
+  if(pre->numActions != post->numActions) printf(" || %d", post->numActions);
+  printf("\n");
+
+  printf("coins = %d", pre->coins);
+  if(pre->coins != post->coins) printf(" || %d", post->coins);
+  printf("\n");
+
+  printf("numBuys = %d", pre->numBuys);
+  if(pre->numBuys != post->numBuys) printf(" || %d\n", post->numBuys);
+  printf("\n");
+
+  int currentPlayer = 1;
+  for (currentPlayer = 1; currentPlayer < pre->numPlayers + 1; currentPlayer++)
+  {
+    printf("handCount[%d] = %d", currentPlayer, pre->handCount[currentPlayer]);
+    if(pre->handCount[currentPlayer] != post->handCount[currentPlayer]) printf(" || %d", post->handCount[currentPlayer]);
+    printf("\n");
+
+    printf("deckCount[%d] = %d", currentPlayer, pre->deckCount[currentPlayer]);
+    if(pre->deckCount[currentPlayer] != post->deckCount[currentPlayer]) printf(" || %d", post->deckCount[currentPlayer]);
+    printf("\n");
+
+    printf("discardCount[%d] = %d", currentPlayer, pre->discardCount[currentPlayer]);
+    if(pre->discardCount[currentPlayer] != post->discardCount[currentPlayer]) printf(" || %d", post->discardCount[currentPlayer]);
+    printf("\n");
+
+    printf("playedCards[%d] = %d", currentPlayer, pre->playedCards[currentPlayer]);
+    if(pre->playedCards[currentPlayer] != post->playedCards[currentPlayer]) printf(" || %d", post->playedCards[currentPlayer]);
+    printf("\n");
+  }
+
+  printf("playedCardCount = %d", pre->playedCardCount);
+  if(pre->playedCardCount != post->playedCardCount) printf(" || %d\n", post->playedCardCount);
+  printf("\n");
 }
