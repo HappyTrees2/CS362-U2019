@@ -128,4 +128,12 @@ int getWinners(int players[MAX_PLAYERS], struct gameState *state);
 /* Set array position of each player who won (remember ties!) to
    1, others to 0 */
 
+
+//TODO: Consider ways to normalize these calls and reduce number of possible parameters.
+int execute_ambassador  (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer);
+int execute_baron       (struct gameState *state, int choice1,                           int currentPlayer);
+int execute_mine        (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer);
+int execute_minion      (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer);
+int execute_tribute     (struct gameState *state, int *tributeRevealedCards, int currentPlayer, int nextPlayer);
+
 #endif

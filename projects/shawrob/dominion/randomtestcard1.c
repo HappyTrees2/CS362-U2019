@@ -3,6 +3,11 @@
 #define true  1
 #define false 0
 
+#include <assert.h>
+#include "dominion.h"
+#include "dominion_helpers.h"
+#include <math.h>
+#include "rngs.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -14,7 +19,22 @@ int main(int argc, char *argv[])
 {
   NOISY_TEST = check_switch_noisyTest(argc, argv);
   printf("===BEGIN random tests for card: BARON===\n");
-  // INSERT TESTS HERE //
+  struct gameState G;
+  int n = 0;
+  for (n = 0; n < 2000; n++)
+  {
+    int i = 0;
+    int p = 0;
+    for (i = 0; i < sizeof(struct gameState); i++)
+      ((char*)&G)[i] = floor(Random() * 256);
+    p = floor(Random() * 2);
+    int c1 = floor(Random() * 2);
+
+    G.deckCount[p] = floor(Random() * MAX_DECK);
+    G.discardCount[p] = floor(Random() * MAX_DECK);
+    G.handCount[p] = floor(Random() * MAX_HAND);
+    execute_baron(&G, c1, p);
+  }
   printf("===END   random tests for card: BARON===\n");
   return 0;
 }

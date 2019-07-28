@@ -5,12 +5,12 @@
 #include <math.h>
 #include <stdlib.h>
 
-//TODO: Consider ways to normalize these calls and reduce number of possible parameters.
-int execute_ambassador  (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer);
-int execute_baron       (struct gameState *state, int choice1,                           int currentPlayer);
-int execute_mine        (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer);
-int execute_minion      (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer);
-int execute_tribute     (struct gameState *state, int *tributeRevealedCards, int currentPlayer, int nextPlayer);
+//////TODO: Consider ways to normalize these calls and reduce number of possible parameters.
+//int execute_ambassador  (struct gameState *state, int choice0, int choice2, int handPos, int currentPlayer);
+//int execute_baron       (struct gameState *state, int choice1,                           int currentPlayer);
+//int execute_mine        (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer);
+//int execute_minion      (struct gameState *state, int choice1, int choice2, int handPos, int currentPlayer);
+//int execute_tribute     (struct gameState *state, int *tributeRevealedCards, int currentPlayer, int nextPlayer);
 
 int compare(const void* a, const void* b) {
   if (*(int*)a > *(int*)b)
