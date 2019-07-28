@@ -62,6 +62,11 @@ cardtest4: cardtest4.c dominion.o rngs.o
 cardtest5: cardtest5.c dominion.o rngs.o
 	gcc -o cardtest5 -g cardtest5.c dominion.o rngs.o ${CFLAGS}
 
+randomtestresults: randomtestcard1.c randomtestcard2.c randomtestcard3.c
+	gcc -o randomtestcard1 randomtestcard1.c dominion.o rngs.o ${CFLAGS}
+	gcc -o randomtestcard2 randomtestcard2.c dominion.o rngs.o ${CFLAGS}
+	gcc -o randomtestcard3 randomtestcard3.c dominion.o rngs.o ${CFLAGS}
+
 unittestresults: unittest1 unittest2 unittest3 unittest4 unittest5 cardtest1 cardtest2 cardtest3 cardtest4 cardtest5
 	./unittest1 &> unittestresults.out
 	gcov -b dominion.c >> unittestresults.out
