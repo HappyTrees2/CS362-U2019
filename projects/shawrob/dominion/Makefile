@@ -72,11 +72,11 @@ randomtestresults: randomtestcard1.c randomtestcard2.c randomtestcard3.c
 	rm -f *.gcda *.gcno
 	gcc -o randomtestcard2 randomtestcard2.c dominion.c rngs.c -g ${CFLAGS}
 	randomtestcard2 -n
-	#randomtestcard2 >> randomtestresults.out
-	#gcov dominion.c >> randomtestresults.out
-	#cat dominion.c.gcov >> randomtestresults.out
-	##gcc -o randomtestcard3 randomtestcard3.c dominion.c rngs.c -g ${CFLAGS}
-	#vim randomtestresults.out
+	randomtestcard2 >> randomtestresults.out
+	gcov dominion.c >> randomtestresults.out
+	cat dominion.c.gcov >> randomtestresults.out
+	gcc -o randomtestcard3 randomtestcard3.c dominion.c rngs.c -g ${CFLAGS}
+	vim randomtestresults.out
 
 unittestresults: unittest1 unittest2 unittest3 unittest4 unittest5 cardtest1 cardtest2 cardtest3 cardtest4 cardtest5
 	./unittest1 &> unittestresults.out
