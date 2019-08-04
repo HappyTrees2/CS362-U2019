@@ -5,8 +5,9 @@
 
 char inputChar()
 {
-    // TODO: rewrite this function
-    return ' ';
+  int lower = 32;
+  int upper = 126;
+  return (rand() % (upper - lower + 1)) + lower;
 }
 
 char *inputString()
@@ -38,7 +39,7 @@ void testme()
     if (c == ')' && state == 7) state = 8;
     if (c == ']' && state == 8)
     {
-      printf("error ");
+      printf("error 200\n");
       exit(200);
     }
     
