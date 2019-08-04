@@ -39,7 +39,7 @@ void testme()
     if (c == ')' && state == 7) state = 8;
     if (c == ']' && state == 8)
     {
-      printf("error 200\n");
+      printf("error ");
       exit(200);
     }
     
