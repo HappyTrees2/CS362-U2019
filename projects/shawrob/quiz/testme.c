@@ -36,7 +36,13 @@ void testme()
     if (c == 'x' && state == 5) state = 6;
     if (c == '}' && state == 6) state = 7;
     if (c == ')' && state == 7) state = 8;
-    if (c == ']' && state == 8) state = 9;
+    if (c == ']' && state == 8)
+    {
+      printf("error ");
+      exit(200);
+    }
+    
+    /* TODO: Restore this code once inputChar() is complete.
     if (s[0] == 'r' && s[1] == 'e'
        && s[2] == 's' && s[3] == 'e'
        && s[4] == 't' && s[5] == '\0'
@@ -45,6 +51,7 @@ void testme()
       printf("error ");
       exit(200);
     }
+    */
   }
 }
 
