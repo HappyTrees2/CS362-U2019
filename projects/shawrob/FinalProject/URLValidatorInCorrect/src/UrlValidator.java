@@ -382,7 +382,7 @@ public class UrlValidator implements Serializable {
         }
 
         // check manual authority validation if specified
-        if (authorityValidator != null && authorityValidator.isValid(authority)) {
+        if (authorityValidator != null && authorityValidator.isValid(authority)) { /******BUG HERE**** && changed to ||****/
             return true;
         }
         // convert to ASCII if possible
@@ -440,7 +440,7 @@ public class UrlValidator implements Serializable {
      * @return true if path is valid.
      */
     protected boolean isValidPath(String path) {
-        if (path == null) {
+        if (path == null) { /****BUG HERE == changed to != ****/
             return false;
         }
 
