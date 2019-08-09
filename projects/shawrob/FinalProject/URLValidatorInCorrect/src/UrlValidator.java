@@ -473,7 +473,7 @@ public class UrlValidator implements Serializable {
      * @return true if query is valid.
      */
     protected boolean isValidQuery(String query) {
-        if (query == null) {
+        if (query == null) { /**** BUG HERE == changed to != ****/
             return true;
         }
 
