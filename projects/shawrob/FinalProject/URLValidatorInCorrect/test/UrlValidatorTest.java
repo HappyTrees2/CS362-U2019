@@ -164,8 +164,8 @@ protected void setUp() {
    public void testIsValid02() {
 	   System.out.println();
 	   System.out.println("Random Testing Urls");
-	   UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
-	   //UrlValidator urlVal = new UrlValidator();
+	   //UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+	   UrlValidator urlVal = new UrlValidator();
 	   Random rand = new Random(111111);
 	   boolean testfail = false;
 	   
