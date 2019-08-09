@@ -194,6 +194,7 @@ protected void setUp() {
 		   {
 			   testfail = true;
 			   System.out.print("Test " + (i + 1) + " failed.\n");
+			   System.out.print("Valid = " + valid + " / isValid = " + urlVal.isValid(randUrl) + "\n");
 			   System.out.print("Scheme: " + testUrlScheme[schemeIndex].item + " / " + testUrlScheme[schemeIndex].valid + "\n");
 			   System.out.print("Authority: " + testUrlAuthority[authorityIndex].item + " / " + testUrlAuthority[authorityIndex].valid + "\n");
 			   System.out.print("Port: " + testUrlPort[portIndex].item + " / " + testUrlPort[portIndex].valid + "\n");
