@@ -159,6 +159,62 @@ protected void setUp() {
    }
    /****************************************************************************************/
    
+   /****************************************************************************************/
+   
+   public void testIsValid02() {
+	   System.out.println();
+	   System.out.println("Random Testing Urls");
+	   UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+	   //UrlValidator urlVal = new UrlValidator();
+	   Random rand = new Random(111111);
+	   boolean testfail = false;
+	   
+	   for(int i = 0; i < 200000;i++)
+	   {
+		   int schemeIndex = rand.nextInt(testUrlScheme.length);
+		   int authorityIndex = rand.nextInt(testUrlAuthority.length);
+		   int portIndex = rand.nextInt(testUrlPort.length);
+		   int pathIndex = rand.nextInt(testPath.length);
+		   int queryIndex = rand.nextInt(testUrlQuery.length);
+		   
+		   String randUrl = testUrlScheme[schemeIndex].item +
+				   			testUrlAuthority[authorityIndex].item + 
+				   			testUrlPort[portIndex].item + 
+				   			testPath[pathIndex].item + 
+				   			testUrlQuery[queryIndex].item;
+		   
+		   boolean valid = true;
+		   valid &= testUrlScheme[schemeIndex].valid;
+		   valid &= testUrlAuthority[authorityIndex].valid; 
+		   valid &= testUrlPort[portIndex].valid; 
+		   valid &= testPath[pathIndex].valid;
+		   valid &= testUrlQuery[queryIndex].valid;
+		   
+		   if(valid != urlVal.isValid(randUrl))
+		   {
+			   testfail = true;
+			   System.out.print("Test " + (i + 1) + " failed.\n");
+			   System.out.print("Scheme: " + testUrlScheme[schemeIndex].item + " / " + testUrlScheme[schemeIndex].valid + "\n");
+			   System.out.print("Authority: " + testUrlAuthority[authorityIndex].item + " / " + testUrlAuthority[authorityIndex].valid + "\n");
+			   System.out.print("Port: " + testUrlPort[portIndex].item + " / " + testUrlPort[portIndex].valid + "\n");
+			   System.out.print("Path: " + testPath[pathIndex].item + " / " + testPath[pathIndex].valid + "\n");
+			   System.out.print("Query: " + testUrlQuery[queryIndex].item + " / " + testUrlQuery[queryIndex].valid + "\n");
+			   System.out.println();
+		   }
+	   }
+	   
+	   if(testfail == false)
+	   {
+		   System.out.println();
+		   System.out.print("All tests passed!\n");
+		   System.out.println();
+	   }
+	   
+	   System.out.print("Random Testing Ends\n");
+   }
+   
+   /****************************************************************************************/
+   
 
    public void testIsValid() {
         testIsValid(testUrlParts, UrlValidator.ALLOW_ALL_SCHEMES);
